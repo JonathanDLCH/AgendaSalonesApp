@@ -1,8 +1,0 @@
-:root{
-    --Azul-Institucional: #102c75;
-    --Amarillo-Institucional: #ebc12d;
-}
-
-.bg-uma{
-    background-color: var(--Azul-Institucional);
-}
