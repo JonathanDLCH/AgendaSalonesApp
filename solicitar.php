@@ -10,7 +10,7 @@ $salon = $_POST['salon'];
 $fecha = $_POST['fecha'];
 $hora = $_POST['hora'];
 
-$status = 'Solicitud Aprobada';
+$status = 'Solicitud en Proceso';
 
 /*Generamos la solicitud para verificar
 $verifica_agenda = "SELECT * FROM ciudadanos";
@@ -29,26 +29,29 @@ $verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matric
 $alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);
 
 if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda    
+    /*
     echo "datos: ".$alumno[0]["matricula"];
     echo $alumno[0]["solicitudes"];
     echo $salon;
     echo $hora;
-    echo $fecha;
+    echo $fecha;*/
     
-    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';");
+    $verifica_agenda = $conn->query("SELECT COUNT(*) FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';");
     $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
 
+    echo "SELECT COUNT(*) FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';";
     if (count($sol_agendadas) > 0){ //Verificamos que haya espacio en las camillas
         echo "ya se agendaron:".count($sol_agendadas);
     }else{
-        echo "esta vacio el salon";
         $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
         $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
         $agregar_solicitud->execute();
         echo "Se agendo";
+        //Cambiamos el estatus
+        $status = 'Solicitud Aprobada';
     }
 
-}else{
+}else{ //Si no existe el alumno lo creamos
     echo "mat ".gettype($matricula);
     $agregar_alumno = $conn->prepare("INSERT INTO alumnos (matricula,solicitudes) VALUES (?,1);");
     $agregar_alumno->bind_param("i",$matricula);
