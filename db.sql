@@ -22,3 +22,12 @@ CREATE TABLE solicitudes(
     FOREIGN KEY(id_salon) REFERENCES salones(nombre_salon),
     FOREIGN KEY(id_alumno) REFERENCES alumnos(alumno)
 );
+
+INSERT INTO salones (nombre_salon,lugares) VALUES ('Shiatsu',13);
+INSERT INTO salones (nombre_salon,lugares) VALUES ('Holistico',2);
+INSERT INTO salones (nombre_salon,lugares) VALUES ('LomiLomi',3);
+INSERT INTO salones (nombre_salon,lugares) VALUES ('Body Paint',1);
+INSERT INTO salones (nombre_salon,lugares) VALUES ('Colorimetria',13);
+INSERT INTO salones (nombre_salon,lugares) VALUES ('Balayage',13);
+
+INSERT INTO alumnos (alumno,solicitudes) VALUES ('Juanita Perez',1);
