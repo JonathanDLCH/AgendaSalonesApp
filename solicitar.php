@@ -1,7 +1,8 @@
 <?php
-include('conectionDataBase.php');
+$conn= include_once "conectionDataBase.php";
 
-$nombre = $_POST['nombre'];
+$matricula = $_POST['matricula'];
+settype($matricula,"integer");
 $practica = $_POST['practica'];
 $docente = $_POST['docente'];
 
@@ -11,9 +12,9 @@ $hora = $_POST['hora'];
 
 $status = 'Solicitud Aprobada';
 
-/*Generamos la solicitud para verificar*/
+/*Generamos la solicitud para verificar
 $verifica_agenda = "SELECT * FROM ciudadanos";
-$verifica_alumno = "SELECT * FROM ciudadanos"; /*tienen limite de practicas por semana?*/
+$verifica_alumno = "SELECT * FROM ciudadanos"; /*tienen limite de practicas por semana?
 
 $agendar = "INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES ('$fecha','$hora','$practica','$docente','$salon','$alumno')";
 $result = mysqli_query($conn, $agendar);
@@ -22,7 +23,39 @@ if($result){
     echo "funciono";
 }else{
     echo "error";
+}*/
+
+$verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matricula);
+$alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);
+
+if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda    
+    echo "datos: ".$alumno[0]["matricula"];
+    echo $alumno[0]["solicitudes"];
+    echo $salon;
+    echo $hora;
+    echo $fecha;
+    
+    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';");
+    $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+
+    if (count($sol_agendadas) > 0){ //Verificamos que haya espacio en las camillas
+        echo "ya se agendaron:".count($sol_agendadas);
+    }else{
+        echo "esta vacio el salon";
+        $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
+        $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
+        $agregar_solicitud->execute();
+        echo "Se agendo";
+    }
+
+}else{
+    echo "mat ".gettype($matricula);
+    $agregar_alumno = $conn->prepare("INSERT INTO alumnos (matricula,solicitudes) VALUES (?,1);");
+    $agregar_alumno->bind_param("i",$matricula);
+    $agregar_alumno->execute();
+    echo "Se genero el registro del alumno.";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -50,14 +83,18 @@ if($result){
             </div>
         </div>
     </div>
-        <?php
-            echo $nombre."<br>";
-            echo $practica."<br>";
-            echo $docente."<br>";
-            echo $salon."<br>";
-            echo $fecha."<br>";
-            echo $hora."<br>";
-        ?>
+    <div class="px-4 py-5 my-5 text-center">
+        <ul class="list-group list-group-flush">
+            <?php
+                echo "<li class='list-group-item'> Matricula: ".$matricula."</li>";
+                echo "<li class='list-group-item'> Practica a realizar: ".$practica."</li>";
+                echo "<li class='list-group-item'> Docente/Supervisor: ".$docente."</li>";
+                echo "<li class='list-group-item'> Salón: ".$salon."</li>";
+                echo "<li class='list-group-item'> fecha: ".$fecha."</li>";
+                echo "<li class='list-group-item'> hora: ".$hora."</li>";
+            ?>
+        </ul>
+    </div>
     </main>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"

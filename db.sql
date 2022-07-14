@@ -7,8 +7,8 @@ CREATE TABLE salones(
 );
 
 CREATE TABLE alumnos(
-    alumno VARCHAR(50) PRIMARY KEY NOT NULL,
-    solicitudes INT(3) NULL
+    matricula INT(10) PRIMARY KEY NOT NULL,
+    solicitudes INT(3)
 );
 
 CREATE TABLE solicitudes(
@@ -18,9 +18,9 @@ CREATE TABLE solicitudes(
     practica VARCHAR(50) NOT NULL,
     docente VARCHAR(50) NOT NULL,
     id_salon VARCHAR(50) NOT NULL,
-    id_alumno VARCHAR(50) NOT NULL,
+    id_alumno INT(3) NOT NULL,
     FOREIGN KEY(id_salon) REFERENCES salones(nombre_salon),
-    FOREIGN KEY(id_alumno) REFERENCES alumnos(alumno)
+    FOREIGN KEY(id_alumno) REFERENCES alumnos(matricula)
 );
 
 INSERT INTO salones (nombre_salon,lugares) VALUES ('Shiatsu',13);
@@ -30,4 +30,7 @@ INSERT INTO salones (nombre_salon,lugares) VALUES ('Body Paint',1);
 INSERT INTO salones (nombre_salon,lugares) VALUES ('Colorimetria',13);
 INSERT INTO salones (nombre_salon,lugares) VALUES ('Balayage',13);
 
-INSERT INTO alumnos (alumno,solicitudes) VALUES ('Juanita Perez',1);
+INSERT INTO alumnos (matricula,solicitudes) VALUES (201731754,3);
+
+
+INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES ('2022-07-22','00:21','ejemplo','docente','Balayage',201731754);
