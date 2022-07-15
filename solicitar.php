@@ -12,19 +12,6 @@ $hora = $_POST['hora'];
 
 $status = 'Solicitud en Proceso';
 
-/*Generamos la solicitud para verificar
-$verifica_agenda = "SELECT * FROM ciudadanos";
-$verifica_alumno = "SELECT * FROM ciudadanos"; /*tienen limite de practicas por semana?
-
-$agendar = "INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES ('$fecha','$hora','$practica','$docente','$salon','$alumno')";
-$result = mysqli_query($conn, $agendar);
-
-if($result){
-    echo "funciono";
-}else{
-    echo "error";
-}*/
-
 $verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matricula);
 $alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);
 
@@ -34,21 +21,34 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
     echo $alumno[0]["solicitudes"];
     echo $salon;
     echo $hora;
-    echo $fecha;*/
-    
-    $verifica_agenda = $conn->query("SELECT COUNT(*) FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';");
+    echo $fecha;
+    */
+    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';"); //------------No esta contando bien los agendados
     $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
 
-    echo "SELECT COUNT(*) FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';";
-    if (count($sol_agendadas) > 0){ //Verificamos que haya espacio en las camillas
-        echo "ya se agendaron:".count($sol_agendadas);
-    }else{
+    $espacios_salon = $conn->query("SELECT * FROM salones");
+    $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
+    foreach ($espacios as $espacio){
+        if($espacio["nombre_salon"] == $salon){
+            echo $espacio["nombre_salon"];
+            $lugares = $espacio["lugares"];
+            echo $lugares;
+            break;
+        }
+    }
+    
+    if (count($sol_agendadas) < $lugares){ //Verificamos que haya espacio en las camillas solicitudes vs espacios libres
+        echo "ya se agendaron:".count($sol_agendadas)." libres: ".$espacios;
+
         $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
         $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
         $agregar_solicitud->execute();
         echo "Se agendo";
         //Cambiamos el estatus
         $status = 'Solicitud Aprobada';
+    }else{
+        echo "Ya no hay espacios";
+        $status= 'Solicitud Denegada';
     }
 
 }else{ //Si no existe el alumno lo creamos
