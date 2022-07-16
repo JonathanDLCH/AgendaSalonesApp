@@ -23,8 +23,10 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
     echo $hora;
     echo $fecha;
     */
-    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='.$salon.' AND fecha='.$fecha.' AND hora='.$hora.';"); //------------No esta contando bien los agendados
+    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon';"); //------------No esta contando bien los agendados
     $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+
+    echo "SELECT * FROM solicitudes WHERE id_salon='$salon';";
 
     $espacios_salon = $conn->query("SELECT * FROM salones");
     $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
@@ -36,9 +38,18 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
             break;
         }
     }
-    
+    echo "si ".count($sol_agendadas)." < ".$lugares;
     if (count($sol_agendadas) < $lugares){ //Verificamos que haya espacio en las camillas solicitudes vs espacios libres
-        echo "ya se agendaron:".count($sol_agendadas)." libres: ".$espacios;
+        echo "ya se agendaron:";
+        echo('<pre>');
+        echo var_dump($sol_agendadas);
+        echo('</pre>');
+
+        /*
+        echo('<pre>');
+        echo var_dump($espacios);
+        echo('</pre>');
+        */
 
         $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
         $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
