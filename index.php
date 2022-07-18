@@ -22,7 +22,7 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.html">Solicitar</a>
+                        <a class="nav-link active" aria-current="page" href="index.php">Solicitar</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="salones.html">Salones</a>
@@ -90,9 +90,24 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="exampleInputEmail1" class="form-label">Fecha</label>
-                                        <input type="date" name="fecha" class="form-control" id="exampleInputEmail1"
-                                            aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+                                            <?php
+                                                if(isset($_GET['status'])){
+                                            ?>
+                                                    <label for="exampleInputEmail1" class="form-label">Fecha</label>
+                                                    <input type="date" name="fecha" class="form-control is-invalid" id="exampleInputEmail1"
+                                                        aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+                                                    <div class="invalid-feedback">
+                                                        Porfavor selecciona una fecha valida.
+                                                    </div>
+                                            <?php
+                                                }else{
+                                            ?>
+                                                    <label for="exampleInputEmail1" class="form-label">Fecha</label>
+                                                    <input type="date" name="fecha" class="form-control" id="exampleInputEmail1"
+                                                        aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+                                            <?php
+                                                }
+                                            ?>
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Hora</label>
