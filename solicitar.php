@@ -11,6 +11,8 @@ $fecha = $_POST['fecha'];
 $hora = $_POST['hora'];
 
 $status = 'Solicitud en Proceso';
+$message = '...';
+$color = '';
 
 $verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matricula);
 $alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);
@@ -23,12 +25,11 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
     echo $hora;
     echo $fecha;
     */
-    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon';"); //------------No esta contando bien los agendados
+    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
     $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+    echo "SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';";
 
-    echo "SELECT * FROM solicitudes WHERE id_salon='$salon';";
-
-    $espacios_salon = $conn->query("SELECT * FROM salones");
+    $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
     $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
     foreach ($espacios as $espacio){
         if($espacio["nombre_salon"] == $salon){
@@ -39,7 +40,7 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
         }
     }
     echo "si ".count($sol_agendadas)." < ".$lugares;
-    if (count($sol_agendadas) < $lugares){ //Verificamos que haya espacio en las camillas solicitudes vs espacios libres
+    if (count($sol_agendadas) < $lugares){ //Si hay lugar disponible
         echo "ya se agendaron:";
         echo('<pre>');
         echo var_dump($sol_agendadas);
@@ -56,10 +57,15 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
         $agregar_solicitud->execute();
         echo "Se agendo";
         //Cambiamos el estatus
+        $color = 'text-success';
         $status = 'Solicitud Aprobada';
-    }else{
+        $message = 'Solicitud procesada correctamente se agendo la solicitud en el salon '.$salon.' para el día '.$fecha.' y la hora '.$hora.' <br> Para poder asistir deberas presentar tu identificación con matricula.';
+
+    }else{ //Si ya no hay lugar disponible
         echo "Ya no hay espacios";
-        $status= 'Solicitud Denegada';
+        $color = 'text-warning';
+        $status = 'Solicitud Denegada';
+        $message = 'No se pudo agendar la solicitud porque el salon '.$salon.' <u>se encuentra totalmente ocupado</u> para el día '.$fecha.' y la hora '.$hora;
     }
 
 }else{ //Si no existe el alumno lo creamos
@@ -87,13 +93,13 @@ if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda
     <h1 class="visually-hidden">Solicitud generada</h1>
 
     <div class="px-4 py-5 my-5 text-center">
-        <h1 class="display-5 fw-bold"><?php echo $status;?></h1>
+        <h1 class="display-5 fw-bold <?php echo $color; ?>"><?php echo $status;?></h1>
         <i class="bi bi-ticket-detailed"></i>
         <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">Tu solicitud se proceso correctamente y validando los campos tu solicitud fue ... Te recomendamos verificar tu solicitud en la agenda del salon correspondiente.</p>
+            <p class="lead mb-4"><?php echo $message; ?> <br> Te recomendamos verificar la agenda del salon correspondiente para ver las solicitudes agendadas.</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Ver agenda</button>
-                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Finalizar</button>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Regresar</button>
             </div>
         </div>
     </div>
