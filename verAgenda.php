@@ -6,9 +6,21 @@ $fecha = $_POST['fecha'];
 $hora = $_POST['hora'];
 $hora = substr($hora,0,2).':00';
 
-    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
-    $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+$verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
+$sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
 
+$espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
+    $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
+    foreach ($espacios as $espacio){
+        if($espacio["nombre_salon"] == $salon){
+            echo $espacio["nombre_salon"];
+            $lugares = $espacio["lugares"];
+            echo $lugares;
+            break;
+        }
+    }
+
+$i=1;
 
 ?>
 <!DOCTYPE html>
@@ -17,7 +29,7 @@ $hora = substr($hora,0,2).':00';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salon <?php echo $salon ?></title>
+    <title>Salon <?php echo $salon; ?></title>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
@@ -48,8 +60,9 @@ $hora = substr($hora,0,2).':00';
 
     <main class="container">
     <section class="mt-5 py-5 text-center container">
-        <h2 class="fw-light">Salon: <?php echo $salon?></h2>
-        <h3>Detalles: <?php echo $fecha.' -> '.$hora ?></h3>
+        <h2 class="fw-light">Salon: <?php echo $salon; ?></h2>
+        <h3>Detalles: <?php echo $fecha.' -> '.$hora; ?></h3>
+        <?php echo $lugares; ?>
         <table class="mt-5 table table-hover">
             <thead>
                 <tr>
@@ -60,23 +73,18 @@ $hora = substr($hora,0,2).':00';
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                </tr>
-                <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                </tr>
-                <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-                </tr>
+                
+                <?php
+                foreach ($sol_agendadas as $solicitud){
+                    echo '<tr>';
+                    echo '<th scope="row">'.$i.'</th>';
+                    echo '<td>'.$solicitud["id_alumno"].'</td>';
+                    echo '<td>'.$solicitud["practica"].'</td>';
+                    echo '<td>'.$solicitud["docente"].'</td>';
+                    echo '</tr>';
+                    $i=$i+1;
+                }
+                ?>
             </tbody>
         </table>
     </section>
@@ -91,4 +99,8 @@ $hora = substr($hora,0,2).':00';
     </footer>
 
 </body>
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+    crossorigin="anonymous"></script>
 </html>
