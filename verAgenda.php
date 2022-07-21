@@ -1,9 +1,9 @@
 <?php
 $conn= include_once "conectionDataBase.php";
 
-$salon = $_POST['salon'];
-$fecha = $_POST['fecha'];
-$hora = $_POST['hora'];
+$salon = $_GET['salon'];
+$fecha = $_GET['fecha'];
+$hora = $_GET['hora'];
 $hora = substr($hora,0,2).':00';
 
 $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
@@ -22,6 +22,8 @@ $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugar
 
 $i=1;
 
+$disponibles = $lugares - sizeof($sol_agendadas)
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -33,6 +35,7 @@ $i=1;
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/png" href="fav.png">
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -62,7 +65,7 @@ $i=1;
     <section class="mt-5 py-5 text-center container">
         <h2 class="fw-light">Salon: <?php echo $salon; ?></h2>
         <h3>Detalles: <?php echo $fecha.' -> '.$hora; ?></h3>
-        <?php echo $lugares; ?>
+        <?php echo 'Total de espacios en el salon: '.$lugares; ?>
         <table class="mt-5 table table-hover">
             <thead>
                 <tr>
@@ -84,9 +87,28 @@ $i=1;
                     echo '</tr>';
                     $i=$i+1;
                 }
+                echo '<tr>';
+                if($disponibles == 0){
+                    echo '<td class="text-warning"><h5>Espacios disponibles: '.$disponibles.'</h5></td>';
+                }else{
+                    echo '<td class="text-success"><h5>Espacios disponibles: '.$disponibles.'</h5></td>';
+                }
+                echo '</tr>';
                 ?>
             </tbody>
         </table>
+
+        <?php
+            if($disponibles != 0){
+        ?>
+        <div class="col-lg-6 col-md-8 mx-auto">
+            <p>
+                <a href="index.php" class="btn btn-primary my-2">Solicita Ahora</a>
+            </p>
+        </div>
+        <?php
+            }
+        ?>
     </section>
     </main>
 
