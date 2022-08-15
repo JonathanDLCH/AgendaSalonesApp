@@ -1,7 +1,6 @@
 <?php
 $conn= include_once "conectionDataBase.php";
 
-
 $clases_query = $conn->query("SELECT * FROM clases ;");
 $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -54,6 +53,7 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                         <th scope="col">Días</th>
                         <th scope="col">Hora inicio</th>
                         <th scope="col">Hora fin</th>
+                        <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>

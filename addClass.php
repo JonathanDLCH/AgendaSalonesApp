@@ -1,12 +1,27 @@
 <?php
 $conn= include_once "conectionDataBase.php";
 
-$clases_query = $conn->query("SELECT * FROM clases ;");
-$clases = $clases_query->fetch_all(MYSQLI_ASSOC);
+$status = '';
+$clase = $_POST['clase'];
+$salon = $_POST['salon'];
+$hora_inicio = $_POST['hora_inicio'];
+$hora_fin = $_POST['hora_fin'];
+$dias = '';
+if(!empty($_POST['dias'])){
+    foreach($_POST['dias'] as $selected){
+        echo $selected."</br>";// Imprime resultados
+        $dias .= $selected.',';
+    }
+}
+
+$agregar_clase = $conn->prepare("INSERT INTO clases (clase,id_salon,hora_inicio,hora_fin,dias) VALUES (?,?,?,?,?);");
+$agregar_clase->bind_param("sssss",$clase,$salon,$hora_inicio,$hora_fin,$dias);
+$agregar_clase->execute();
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -52,7 +67,7 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                     <div>
                         <div class="bd-example-snippet bd-code-snippet">
                             <div class="bd-example">
-                                <form action="dashboard.php" method="POST">
+                                <form action="addClass.php" method="POST">
                                     <div class="mb-3">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control" id="floatingInput"
@@ -73,37 +88,37 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Hora inicio</label>
-                                        <input type="time" name="hora" class="form-control" id="exampleInputEmail1"
+                                        <input type="time" name="hora_inicio" class="form-control"
                                             aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Hora fin</label>
-                                        <input type="time" name="hora" class="form-control" id="exampleInputEmail1"
+                                        <input type="time" name="hora_fin" class="form-control"
                                             aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                                     </div>
                                     <div class="mb-3">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="dias[]" value="Lun">
                                             <label class="form-check-label" for="inlineCheckbox1">Lun</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="dias[]" value="Mar">
                                             <label class="form-check-label" for="inlineCheckbox2">Mar</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="dias[]" value="Mie">
                                             <label class="form-check-label" for="inlineCheckbox2">Mie</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="dias[]" value="Jue">
                                             <label class="form-check-label" for="inlineCheckbox2">Jue</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="dias[]" value="Vie">
                                             <label class="form-check-label" for="inlineCheckbox2">Vie</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="dias[]" value="Sab">
                                             <label class="form-check-label" for="inlineCheckbox2">Sab</label>
                                         </div>
                                     </div>
