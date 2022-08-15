@@ -23,6 +23,16 @@ CREATE TABLE solicitudes(
     FOREIGN KEY(id_alumno) REFERENCES alumnos(matricula)
 );
 
+CREATE TABLE clases(
+    id_clase INT(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    clase VARCHAR(50) NOT NULL,
+    id_salon VARCHAR(50) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    dias VARCHAR(50) NOT NULL,
+    FOREIGN KEY(id_salon) REFERENCES salones(nombre_salon)
+);
+
 INSERT INTO salones (nombre_salon,lugares) VALUES ('Shiatsu',13);
 INSERT INTO salones (nombre_salon,lugares) VALUES ('Holistico',2);
 INSERT INTO salones (nombre_salon,lugares) VALUES ('LomiLomi',3);

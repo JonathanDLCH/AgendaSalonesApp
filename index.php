@@ -9,7 +9,7 @@
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <link rel="shortcut icon" type="image/png" href="fav.png">
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png">
 </head>
 
 <body>
@@ -56,8 +56,7 @@
                                                 placeholder="matricula" name="matricula" min="1" required>
                                             <label for="floatingInput">Matricula</label>
                                         </div>
-                                        <div id="emailHelp" class="form-text">En caso de no ingresar el nombre completo
-                                            no se realizara la solicitud.
+                                        <div id="emailHelp" class="form-text">En caso de no ingresar la matricula no se realizara la solicitud.
                                         </div>
                                     </div>
                                     <div class="mb-3">

@@ -22,7 +22,7 @@ $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugar
 
 $i=1;
 
-$disponibles = $lugares - sizeof($sol_agendadas)
+$disponibles = $lugares - sizeof($sol_agendadas);
 
 ?>
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ $disponibles = $lugares - sizeof($sol_agendadas)
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <link rel="shortcut icon" type="image/png" href="fav.png">
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png">
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
