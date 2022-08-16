@@ -54,6 +54,7 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                         <th scope="col">Hora inicio</th>
                         <th scope="col">Hora fin</th>
                         <th scope="col"></th>
+                        <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,10 +67,12 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                                 echo '<td>'.$clase["dias"].'</td>';
                                 echo '<td>'.$clase["hora_inicio"].'</td>';
                                 echo '<td>'.$clase["hora_fin"].'</td>';
+                                echo '<td> <button type="submit" class="btn btn-primary">Editar</button> </td>';
+                                echo '<td> <button type="submit" class="btn btn-danger">Eliminar</button> </td>';
                                 echo '</tr>';
                             }
                         }
-                        echo '<td><a href="addClass.php" class="btn btn-primary my-2">Agregar clase</a></td>';
+                        echo '<td><a href="addClass.php" class="btn btn-success my-2">Agregar clase</a></td>';
                         ?>
                     </tbody>
                 </table>                    

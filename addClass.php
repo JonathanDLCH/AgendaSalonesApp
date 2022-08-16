@@ -1,22 +1,26 @@
 <?php
 $conn= include_once "conectionDataBase.php";
 
-$status = '';
 $clase = $_POST['clase'];
 $salon = $_POST['salon'];
 $hora_inicio = $_POST['hora_inicio'];
+$hora_inicio = substr($hora_inicio,0,2).':00';
 $hora_fin = $_POST['hora_fin'];
+$hora_fin = substr($hora_fin,0,2).':00';
 $dias = '';
 if(!empty($_POST['dias'])){
     foreach($_POST['dias'] as $selected){
-        echo $selected."</br>";// Imprime resultados
+        //echo $selected."</br>";// Imprime resultados
         $dias .= $selected.',';
     }
+    $agregar_clase = $conn->prepare("INSERT INTO clases (clase,id_salon,hora_inicio,hora_fin,dias) VALUES (?,?,?,?,?);");
+    $agregar_clase->bind_param("sssss",$clase,$salon,$hora_inicio,$hora_fin,$dias);
+    $agregar_clase->execute();
+    $status = 'done';
+}else{
+    $status = 'missing';
 }
 
-$agregar_clase = $conn->prepare("INSERT INTO clases (clase,id_salon,hora_inicio,hora_fin,dias) VALUES (?,?,?,?,?);");
-$agregar_clase->bind_param("sssss",$clase,$salon,$hora_inicio,$hora_fin,$dias);
-$agregar_clase->execute();
 
 
 ?>
@@ -62,6 +66,16 @@ $agregar_clase->execute();
                 <article class="my-3" id="overview">
                     <div class="bd-heading sticky-xl-top align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
                         <h3>Agregar Clase</h3>
+                        <?php
+                            if(isset($clase)){
+                                if($status=='done'){
+                                    echo '<div class="alert alert-success" role="alert">Se registro de forma exitosa!</div>';
+                                }
+                                if($status=='missing'){
+                                    echo '<div class="alert alert-warning" role="alert">Faltan valores!</div>';
+                                }
+                            }
+                        ?>
                     </div>
 
                     <div>
