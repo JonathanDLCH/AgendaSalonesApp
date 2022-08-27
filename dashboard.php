@@ -29,7 +29,7 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Clases</a>
+                        <a class="nav-link active" aria-current="page" href="dashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="salones.html">Cancelación</a>
@@ -67,8 +67,8 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                                 echo '<td>'.$clase["dias"].'</td>';
                                 echo '<td>'.$clase["hora_inicio"].'</td>';
                                 echo '<td>'.$clase["hora_fin"].'</td>';
-                                echo '<td> <button type="submit" class="btn btn-primary">Editar</button> </td>';
-                                echo '<td> <button type="submit" class="btn btn-danger">Eliminar</button> </td>';
+                                echo '<td> <a href="editClass.php?id='.$clase["clase"].'" class="btn btn-primary my-2">Editar</a> </td>';
+                                echo '<td> <a href="deleteClass.php?id='.$clase["clase"].'" class="btn btn-danger my-2">Eliminar</a> </td>';
                                 echo '</tr>';
                             }
                         }

@@ -1,28 +1,51 @@
 <?php
 $conn= include_once "conectionDataBase.php";
 
+function saber_dia($nombredia) {
+    /**
+     * $nombredía : fecha formato date
+     * Nos regresa el día de la semana en string de acuerdo al array
+     */
+    $dias = array('Dom','Lun','Mar','Mie','Jue','Vie','Sab');
+    $fecha = $dias[date('N', strtotime($nombredia))];
+    return $fecha;
+    
+}
+
 $salon = $_GET['salon'];
 $fecha = $_GET['fecha'];
 $hora = $_GET['hora'];
 $hora = substr($hora,0,2).':00';
 
-$verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
-$sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+$dia = saber_dia($fecha);
 
-$espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
-    $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
-    foreach ($espacios as $espacio){
-        if($espacio["nombre_salon"] == $salon){
-            echo $espacio["nombre_salon"];
-            $lugares = $espacio["lugares"];
-            echo $lugares;
-            break;
+$verifica_clase = $conn->query("SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%$dia%' AND (hora_inicio<='$hora' AND '$hora'<hora_fin );"); //Query para ver clases en el salon,dia,hora especificos
+$clase_dia = $verifica_clase->fetch_all(MYSQLI_ASSOC);
+echo "SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%dia%' AND (hora_inicio<='$hora' AND '$hora'<=hora_fin );";
+if(sizeof($clase_dia)){
+    //Si existe una clase a esa hora no hay lugares disponibles
+    $disponibles = '0. Se imparte la clase: '.$clase_dia[0]["clase"];
+    
+}else{
+    $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
+    $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+    
+    $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
+        $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
+        foreach ($espacios as $espacio){
+            if($espacio["nombre_salon"] == $salon){
+                //echo $espacio["nombre_salon"];
+                $lugares = $espacio["lugares"];
+                //echo $lugares;
+                break;
+            }
         }
-    }
+    
+    $i=1;
+    
+    $disponibles = $lugares - sizeof($sol_agendadas);
+}
 
-$i=1;
-
-$disponibles = $lugares - sizeof($sol_agendadas);
 
 ?>
 <!DOCTYPE html>
@@ -64,7 +87,7 @@ $disponibles = $lugares - sizeof($sol_agendadas);
     <main class="container">
     <section class="mt-5 py-5 text-center container">
         <h2 class="fw-light">Salon: <?php echo $salon; ?></h2>
-        <h3>Detalles: <?php echo $fecha.' -> '.$hora; ?></h3>
+        <h3>Detalles: <?php echo $dia.' '.$fecha.' -> '.$hora; ?></h3>
         <?php echo 'Total de espacios en el salon: '.$lugares; ?>
         <table class="mt-5 table table-hover">
             <thead>

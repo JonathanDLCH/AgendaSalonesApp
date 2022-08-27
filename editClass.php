@@ -1,26 +1,19 @@
 <?php
 $conn= include_once "conectionDataBase.php";
 
-$clase = $_POST['clase'];
-$salon = $_POST['salon'];
-$hora_inicio = $_POST['hora_inicio'];
-$hora_inicio = substr($hora_inicio,0,2).':00';
-$hora_fin = $_POST['hora_fin'];
-$hora_fin = substr($hora_fin,0,2).':00';
-$dias = '';
-if(!empty($_POST['dias'])){
-    foreach($_POST['dias'] as $selected){
-        //echo $selected."</br>";// Imprime resultados
-        $dias .= $selected.',';
+if(isset($_GET["id"])){
+    $id = $_GET["id"];
+    $query = "SELECT * FROM clases WHERE clase = $id";
+    $result = mysqli_query($conn, $query);
+    if (mysqli_num_rows($result) == 1){
+        $row = mysqli_fetch_array($result);
+        $clase = $row['clase'];
+        $salon = $row['salon'];
+        $hora_inicio = $row['hora_inicio'];
+        $hora_fin = $row['hora_fin'];
+        $dias = $row['dias'];
     }
-    $agregar_clase = $conn->prepare("INSERT INTO clases (clase,id_salon,hora_inicio,hora_fin,dias) VALUES (?,?,?,?,?);");
-    $agregar_clase->bind_param("sssss",$clase,$salon,$hora_inicio,$hora_fin,$dias);
-    $agregar_clase->execute();
-    $status = 'done';
-}else{
-    $status = 'missing';
 }
-
 
 
 ?>
@@ -66,26 +59,17 @@ if(!empty($_POST['dias'])){
                 <article class="my-3" id="overview">
                     <div class="bd-heading sticky-xl-top align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
                         <h3>Agregar Clase</h3>
-                        <?php
-                            if(isset($clase)){
-                                if($status=='done'){
-                                    echo '<div class="alert alert-success" role="alert">Se registro de forma exitosa!</div>';
-                                }
-                                if($status=='missing'){
-                                    echo '<div class="alert alert-warning" role="alert">Faltan valores!</div>';
-                                }
-                            }
-                        ?>
                     </div>
 
                     <div>
                         <div class="bd-example-snippet bd-code-snippet">
                             <div class="bd-example">
-                                <form action="addClass.php" method="POST">
+                                <form action="edit.php?id=<?php echo $id; ?>" method="GET">
                                     <div class="mb-3">
                                         <div class="form-floating mb-3">
+                                            <input type="hidden" value="<?php echo $id; ?>" name="id">
                                             <input type="text" class="form-control" id="floatingInput"
-                                                placeholder="clase" name="clase" required>
+                                                placeholder="clase" value="<?php echo $clase; ?>" name="clase" required>
                                             <label for="floatingInput">Clase</label>
                                         </div>
                                     </div>
@@ -102,12 +86,12 @@ if(!empty($_POST['dias'])){
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Hora inicio</label>
-                                        <input type="time" name="hora_inicio" class="form-control"
+                                        <input type="time" value="<?php echo $hora_inicio; ?>" name="hora_inicio" class="form-control"
                                             aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Hora fin</label>
-                                        <input type="time" name="hora_fin" class="form-control"
+                                        <input type="time" value="<?php echo $hora_fin; ?>" name="hora_fin" class="form-control"
                                             aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                                     </div>
                                     <div class="mb-3">

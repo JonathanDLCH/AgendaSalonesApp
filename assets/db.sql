@@ -24,8 +24,7 @@ CREATE TABLE solicitudes(
 );
 
 CREATE TABLE clases(
-    id_clase INT(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    clase VARCHAR(50) NOT NULL,
+    clase VARCHAR(50) NOT NULL PRIMARY KEY,
     id_salon VARCHAR(50) NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL,
