@@ -1,5 +1,6 @@
 <?php
-$conn= include_once "conectionDataBase.php";
+$conn = include_once "conectionDataBase.php";
+require 'getDay.php';
 
 $matricula = $_POST['matricula'];
 settype($matricula,"integer");
@@ -19,7 +20,18 @@ if($hoy > $fecha){ //Si ya paso la fecha  no se agenda
     echo "Ya paso la fecha";
     header("location:index.php?status='Error en la fecha'");
 }else{ //Si la fecha es futura
-    //echo $hoy;
+
+    //----------------Validar que no haya clase
+    //Verificación de que no haya una clase
+    $dia = get_dia($fecha);
+    
+    $verifica_clase = $conn->query("SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%$dia%' AND (hora_inicio<='$hora' AND '$hora'<hora_fin );"); //Query para ver clases en el salon,dia,hora especificos
+    $clase_dia = $verifica_clase->fetch_all(MYSQLI_ASSOC);
+    echo "SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%dia%' AND (hora_inicio<='$hora' AND '$hora'<=hora_fin );";
+    if(sizeof($clase_dia)){
+
+    }
+    //----------------hasta aca insertar validación
 
     $verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matricula);
     $alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);

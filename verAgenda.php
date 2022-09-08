@@ -9,7 +9,6 @@ function saber_dia($nombredia) {
     $dias = array('Dom','Lun','Mar','Mie','Jue','Vie','Sab');
     $fecha = $dias[date('N', strtotime($nombredia))];
     return $fecha;
-    
 }
 
 $salon = $_GET['salon'];
@@ -19,9 +18,10 @@ $hora = substr($hora,0,2).':00';
 
 $dia = saber_dia($fecha);
 
+//Verificación de que no haya una clase
 $verifica_clase = $conn->query("SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%$dia%' AND (hora_inicio<='$hora' AND '$hora'<hora_fin );"); //Query para ver clases en el salon,dia,hora especificos
 $clase_dia = $verifica_clase->fetch_all(MYSQLI_ASSOC);
-echo "SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%dia%' AND (hora_inicio<='$hora' AND '$hora'<=hora_fin );";
+//echo "SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%dia%' AND (hora_inicio<='$hora' AND '$hora'<=hora_fin );";
 if(sizeof($clase_dia)){
     //Si existe una clase a esa hora no hay lugares disponibles
     $disponibles = '0. Se imparte la clase: '.$clase_dia[0]["clase"];
