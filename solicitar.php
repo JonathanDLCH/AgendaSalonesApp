@@ -24,84 +24,92 @@ if($hoy > $fecha){ //Si ya paso la fecha  no se agenda
     //----------------Validar que no haya clase
     //Verificación de que no haya una clase
     $dia = get_dia($fecha);
+    echo $dia;
     
     $verifica_clase = $conn->query("SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%$dia%' AND (hora_inicio<='$hora' AND '$hora'<hora_fin );"); //Query para ver clases en el salon,dia,hora especificos
     $clase_dia = $verifica_clase->fetch_all(MYSQLI_ASSOC);
     echo "SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%dia%' AND (hora_inicio<='$hora' AND '$hora'<=hora_fin );";
+    echo sizeof($clase_dia);
+    print_r($clase_dia);
     if(sizeof($clase_dia)){
+        $color = 'text-danger';
+        $status = 'Solicitud Denegada-Clase impartiéndose';
+        $message = 'No se pudo agendar la solicitud porque el salon '.$salon.' <u>se encuentra ocupado con la clase '.$clase_dia[0]["clase"].'</u> para el día '.$fecha.' y la hora '.$hora;
+    }else{ //Si no hay clase puede continuar el proceso de solicitud
 
+        $verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matricula);
+        $alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);
+
+        if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda    
+            $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
+            $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+
+            $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
+            $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
+            foreach ($espacios as $espacio){
+                if($espacio["nombre_salon"] == $salon){
+                    $lugares = $espacio["lugares"];
+                    break;
+                }
+            }
+            if (count($sol_agendadas) < $lugares){ //Si hay lugar disponible
+
+                $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
+                $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
+                $agregar_solicitud->execute();
+                //Cambiamos el estatus
+                $color = 'text-success';
+                $status = 'Solicitud Aprobada';
+                $message = 'Solicitud procesada correctamente se agendo la solicitud en el salon '.$salon.' para el día '.$fecha.' y la hora '.$hora.'hrs <br> Para poder asistir deberas presentar tu identificación con matricula.';
+
+            }else{ //Si ya no hay lugar disponible
+                //echo "Ya no hay espacios";
+                $color = 'text-warning';
+                $status = 'Solicitud Denegada';
+                $message = 'No se pudo agendar la solicitud porque el salon '.$salon.' <u>se encuentra totalmente ocupado</u> para el día '.$fecha.' y la hora '.$hora;
+            }
+
+        }else{ //Si no existe el alumno lo creamos
+            //echo "mat ".gettype($matricula);
+            $agregar_alumno = $conn->prepare("INSERT INTO alumnos (matricula,solicitudes) VALUES (?,1);");
+            $agregar_alumno->bind_param("i",$matricula);
+            $agregar_alumno->execute();
+
+            //agendar($salon,$fecha,$hora,$practica,$docente,$matricula);
+            $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
+            $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
+            //echo "SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';";
+
+            $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
+            $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
+            foreach ($espacios as $espacio){
+                if($espacio["nombre_salon"] == $salon){
+                    $lugares = $espacio["lugares"];
+                    break;
+                }
+            }
+            
+            if (count($sol_agendadas) < $lugares){ //Si hay lugar disponible
+
+                $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
+                $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
+                $agregar_solicitud->execute();
+                //Cambiamos el estatus
+                $color = 'text-success';
+                $status = 'Solicitud Aprobada';
+                $message = 'Solicitud procesada correctamente se agendo la solicitud en el salon '.$salon.' para el día '.$fecha.' y la hora '.$hora.'hrs <br> Para poder asistir deberas presentar tu identificación con matricula.';
+
+            }else{ //Si ya no hay lugar disponible
+                //echo "Ya no hay espacios";
+                $color = 'text-warning';
+                $status = 'Solicitud Denegada';
+                $message = 'No se pudo agendar la solicitud porque el salon '.$salon.' <u>se encuentra totalmente ocupado</u> para el día '.$fecha.' y la hora '.$hora;
+            }
+        }
     }
     //----------------hasta aca insertar validación
 
-    $verifica_alumno = $conn->query("SELECT * FROM alumnos WHERE matricula=".$matricula);
-    $alumno = $verifica_alumno->fetch_all(MYSQLI_ASSOC);
-
-    if (count($alumno) > 0){ //Si el alumno ya existe -> revisamos la agenda    
-        $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
-        $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
-
-        $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
-        $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
-        foreach ($espacios as $espacio){
-            if($espacio["nombre_salon"] == $salon){
-                $lugares = $espacio["lugares"];
-                break;
-            }
-        }
-        if (count($sol_agendadas) < $lugares){ //Si hay lugar disponible
-
-            $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
-            $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
-            $agregar_solicitud->execute();
-            //Cambiamos el estatus
-            $color = 'text-success';
-            $status = 'Solicitud Aprobada';
-            $message = 'Solicitud procesada correctamente se agendo la solicitud en el salon '.$salon.' para el día '.$fecha.' y la hora '.$hora.'hrs <br> Para poder asistir deberas presentar tu identificación con matricula.';
-
-        }else{ //Si ya no hay lugar disponible
-            //echo "Ya no hay espacios";
-            $color = 'text-warning';
-            $status = 'Solicitud Denegada';
-            $message = 'No se pudo agendar la solicitud porque el salon '.$salon.' <u>se encuentra totalmente ocupado</u> para el día '.$fecha.' y la hora '.$hora;
-        }
-
-    }else{ //Si no existe el alumno lo creamos
-        //echo "mat ".gettype($matricula);
-        $agregar_alumno = $conn->prepare("INSERT INTO alumnos (matricula,solicitudes) VALUES (?,1);");
-        $agregar_alumno->bind_param("i",$matricula);
-        $agregar_alumno->execute();
-
-        //agendar($salon,$fecha,$hora,$practica,$docente,$matricula);
-        $verifica_agenda = $conn->query("SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';"); //Query para ver agenda
-        $sol_agendadas = $verifica_agenda->fetch_all(MYSQLI_ASSOC);
-        //echo "SELECT * FROM solicitudes WHERE id_salon='$salon' AND fecha='$fecha' AND hora='$hora';";
-
-        $espacios_salon = $conn->query("SELECT * FROM salones"); //Query consultar lugares de salon
-        $espacios = $espacios_salon->fetch_all(MYSQLI_ASSOC);
-        foreach ($espacios as $espacio){
-            if($espacio["nombre_salon"] == $salon){
-                $lugares = $espacio["lugares"];
-                break;
-            }
-        }
-        
-        if (count($sol_agendadas) < $lugares){ //Si hay lugar disponible
-
-            $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
-            $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
-            $agregar_solicitud->execute();
-            //Cambiamos el estatus
-            $color = 'text-success';
-            $status = 'Solicitud Aprobada';
-            $message = 'Solicitud procesada correctamente se agendo la solicitud en el salon '.$salon.' para el día '.$fecha.' y la hora '.$hora.'hrs <br> Para poder asistir deberas presentar tu identificación con matricula.';
-
-        }else{ //Si ya no hay lugar disponible
-            //echo "Ya no hay espacios";
-            $color = 'text-warning';
-            $status = 'Solicitud Denegada';
-            $message = 'No se pudo agendar la solicitud porque el salon '.$salon.' <u>se encuentra totalmente ocupado</u> para el día '.$fecha.' y la hora '.$hora;
-        }
-    }
+    
 }
 
 ?>
@@ -128,7 +136,7 @@ if($hoy > $fecha){ //Si ya paso la fecha  no se agenda
             <p class="lead mb-4"><?php echo $message; ?> <br> Te recomendamos verificar la agenda del salon correspondiente para ver las solicitudes agendadas.</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a href="verAgenda.php?<?php echo 'salon='.$salon.'&fecha='.$fecha.'&hora='.$hora?>" class="btn btn-primary my-2">Ver agenda</a>
-                <a href="salones.html" class="btn btn-secondary my-2">Regresar</a>
+                <a href="index.html" class="btn btn-secondary my-2">Regresar</a>
             </div>
         </div>
     </div>
