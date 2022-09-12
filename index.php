@@ -114,10 +114,6 @@
                                         <input type="time" name="hora" class="form-control" id="exampleInputEmail1"
                                             aria-describedby="emailHelp" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                                     </div>
-                                    <div class="mb-3 form-check">
-                                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                                    </div>
 
                                     <button type="submit" class="btn btn-primary">Solicitar</button>
                                 </form>
