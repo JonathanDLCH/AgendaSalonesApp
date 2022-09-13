@@ -21,8 +21,6 @@ if(!empty($_POST['dias'])){
     $status = 'missing';
 }
 
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">

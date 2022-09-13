@@ -16,21 +16,16 @@ $message = '...';
 $color = '';
 
 $hoy=date('Y-m-d');
-if($hoy > $fecha){ //Si ya paso la fecha  no se agenda
-    echo "Ya paso la fecha";
+$dia = get_dia($fecha);
+if($hoy > $fecha || $dia=='Dom'){ //Si ya paso la fecha  no se agenda
     header("location:index.php?status='Error en la fecha'");
+
 }else{ //Si la fecha es futura
 
-    //----------------Validar que no haya clase
     //Verificación de que no haya una clase
-    $dia = get_dia($fecha);
-    //echo $dia;
-    
     $verifica_clase = $conn->query("SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%$dia%' AND (hora_inicio<='$hora' AND '$hora'<hora_fin );"); //Query para ver clases en el salon,dia,hora especificos
     $clase_dia = $verifica_clase->fetch_all(MYSQLI_ASSOC);
-    //echo "SELECT * FROM clases WHERE id_salon='$salon' AND dias LIKE '%dia%' AND (hora_inicio<='$hora' AND '$hora'<=hora_fin );";
-    //echo sizeof($clase_dia);
-    //print_r($clase_dia);
+    
     if(sizeof($clase_dia)){
         $color = 'text-danger';
         $status = 'Solicitud Denegada-Clase impartiéndose';
@@ -107,8 +102,6 @@ if($hoy > $fecha){ //Si ya paso la fecha  no se agenda
             }
         }
     }
-    //----------------hasta aca insertar validación
-
     
 }
 
