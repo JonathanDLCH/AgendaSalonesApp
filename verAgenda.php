@@ -1,6 +1,6 @@
 <?php
 $conn = include_once "conectionDataBase.php";
-require 'getDay.php';
+include('getDay.php');
 
 $salon = $_GET['salon'];
 $fecha = $_GET['fecha'];

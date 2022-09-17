@@ -1,6 +1,6 @@
 <?php
 $conn = include_once "conectionDataBase.php";
-require 'getDay.php';
+include('getDay.php');
 
 $matricula = $_POST['matricula'];
 settype($matricula,"integer");
@@ -18,8 +18,7 @@ $color = '';
 $hoy=date('Y-m-d');
 $dia = get_dia($fecha);
 if($hoy > $fecha || $dia=='Dom'){ //Si ya paso la fecha  no se agenda
-    header("location:index.php?status='Error en la fecha'");
-
+    header("location:index.php?status='Error en la fecha'&".$fecha."&".$dia);
 }else{ //Si la fecha es futura
 
     //Verificación de que no haya una clase
@@ -52,6 +51,8 @@ if($hoy > $fecha || $dia=='Dom'){ //Si ya paso la fecha  no se agenda
                 $agregar_solicitud = $conn->prepare("INSERT INTO solicitudes (fecha,hora,practica,docente,id_salon,id_alumno) VALUES (?,?,?,?,?,?);");
                 $agregar_solicitud->bind_param("sssssi",$fecha,$hora,$practica,$docente,$salon,$matricula);
                 $agregar_solicitud->execute();
+
+
                 //Cambiamos el estatus
                 $color = 'text-success';
                 $status = 'Solicitud Aprobada';
@@ -119,6 +120,7 @@ if($hoy > $fecha || $dia=='Dom'){ //Si ya paso la fecha  no se agenda
     <link rel="shortcut icon" type="image/png" href="assets/fav.png">
 </head>
 <body>
+    <?php echo $dia;?>
     <main class="container">
     <h1 class="visually-hidden">Solicitud generada</h1>
 
@@ -129,7 +131,7 @@ if($hoy > $fecha || $dia=='Dom'){ //Si ya paso la fecha  no se agenda
             <p class="lead mb-4"><?php echo $message; ?> <br> Te recomendamos verificar la agenda del salon correspondiente para ver las solicitudes agendadas.</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a href="verAgenda.php?<?php echo 'salon='.$salon.'&fecha='.$fecha.'&hora='.$hora?>" class="btn btn-primary my-2">Ver agenda</a>
-                <a href="index.html" class="btn btn-secondary my-2">Regresar</a>
+                <a href="index.php" class="btn btn-secondary my-2">Regresar</a>
             </div>
         </div>
     </div>
