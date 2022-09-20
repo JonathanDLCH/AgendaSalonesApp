@@ -43,7 +43,7 @@
                 <article class="my-3" id="overview">
                     <div class="bd-heading sticky-xl-top align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
                         <h3>Solicita tu espacio para realizar practica</h3>
-                        <a class="d-flex align-items-center" href="../forms/overview/">+INFO</a>
+                        <a class="d-flex align-items-center" href="https://docs.google.com/document/d/1i_97b3GLz3kD7sqYQA_qV6IWHkDeg_1Q7wNn3W32abk/edit?usp=sharing" target="_blank">+INFO(Manual)</a>
                     </div>
 
                     <div>

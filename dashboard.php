@@ -32,7 +32,7 @@ $clases = $clases_query->fetch_all(MYSQLI_ASSOC);
                         <a class="nav-link active" aria-current="page" href="dashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="salones.html">Cancelación</a>
+                        <a class="nav-link" href="cancelacion.php">Cancelación</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="QyA.html">Indicaciónes</a>

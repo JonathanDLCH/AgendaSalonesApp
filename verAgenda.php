@@ -80,7 +80,7 @@ if(sizeof($clase_dia)){
             <thead>
                 <tr>
                 <th scope="col">#Cam</th>
-                <th scope="col">alumna</th>
+                <th scope="col">Alumn@</th>
                 <th scope="col">Practica</th>
                 <th scope="col">Supervisor</th>
                 </tr>
